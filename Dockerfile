@@ -38,6 +38,6 @@ RUN sed -i -e "s/post_max_size.*/post_max_size = $DEFAULT_SIZE/" /etc/php/7.0/fp
 
 VOLUME ["$APP_BASE/db", "$APP_BASE/packagefiles"]
 
-EXPOSE 80-60000
+EXPOSE 80
 
 ENTRYPOINT ["docker-entrypoint"]
