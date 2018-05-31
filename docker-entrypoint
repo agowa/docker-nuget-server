@@ -7,7 +7,7 @@ if [ -z "${NGINX_FILES}" ];then
 fi
 
 if [ "${1:0:1}" == "-" ];then
-  echo "Usage: docker run -d -p 80:80 --name nuget-server idoop/simple-nuget-server"
+  echo "Usage: docker run -d -p 80:80 --name nuget-server agowa338/simple-nuget-server"
 elif [ "$#" == "0" ];then
 
   # Set API key.
