@@ -1,20 +1,20 @@
 # docker-nuget-server
 
-[![Docker Build Status](https://img.shields.io/docker/build/idoop/docker-nuget-server.svg)](https://hub.docker.com/r/idoop/docker-nuget-server/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/idoop/docker-nuget-server.svg)](https://hub.docker.com/r/idoop/docker-nuget-server/)
-[![Docker Automated build](https://img.shields.io/docker/automated/idoop/docker-nuget-server.svg)](https://hub.docker.com/r/idoop/docker-nuget-server/)
-[![ImageLayers Size](https://img.shields.io/imagelayers/image-size/idoop/docker-nuget-server/latest.svg)](https://hub.docker.com/r/idoop/docker-nuget-server/)
-[![ImageLayers Layers](https://img.shields.io/imagelayers/layers/idoop/docker-nuget-server/latest.svg)](https://hub.docker.com/r/idoop/docker-nuget-server/)
+[![Docker Build Status](https://img.shields.io/docker/build/agowa338/docker-nuget-server.svg)](https://hub.docker.com/r/agowa338/docker-nuget-server/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/agowa338/docker-nuget-server.svg)](https://hub.docker.com/r/agowa338/docker-nuget-server/)
+[![Docker Automated build](https://img.shields.io/docker/automated/agowa338/docker-nuget-server.svg)](https://hub.docker.com/r/agowa338/docker-nuget-server/)
+[![ImageLayers Size](https://img.shields.io/imagelayers/image-size/agowa338/docker-nuget-server/latest.svg)](https://hub.docker.com/r/agowa338/docker-nuget-server/)
+[![ImageLayers Layers](https://img.shields.io/imagelayers/layers/agowa338/docker-nuget-server/latest.svg)](https://hub.docker.com/r/agowa338/docker-nuget-server/)
 
 
 
-Auto build docker [image](https://hub.docker.com/r/idoop/docker-nuget-server/) for [simple-nuget-server](https://github.com/Daniel15/simple-nuget-server)
+Auto build docker [image](https://hub.docker.com/r/agowa338/docker-nuget-server/) for [simple-nuget-server](https://github.com/agowa338/simple-nuget-server)
 
 ## Quick start
 
 ### docker command
 ``` shell
-docker run -d --name nuget-server -p 80:80 -e NUGET_API_KEY=bF82eD5c1 idoop/docker-nuget-server
+docker run -d --name nuget-server -p 80:80 -e NUGET_API_KEY=bF82eD5c1 agowa338/docker-nuget-server
 ```
 
 ### docker-compose
@@ -24,7 +24,7 @@ version: '2'
 services:
   nuget-server:
     container_name: nuget-server
-    image: idoop/docker-nuget-server:latest
+    image: agowa338/docker-nuget-server:latest
     network_mode: "host"
     restart: always
     environment:
