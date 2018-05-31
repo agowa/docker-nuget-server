@@ -1,5 +1,5 @@
 FROM nginx
-MAINTAINER Swire Chen <idoop@msn.cn>
+MAINTAINER agowa338
 
 ENV APP_BASE /var/www/simple-nuget-server
 ENV DEFAULT_SIZE 20M
@@ -12,7 +12,7 @@ RUN apt-get update && \
     ca-certificates curl unzip php php-fpm \
     php-sqlite3 php-zip php-xml && \
     rm -rf /var/lib/apt/lists/* && \
-    curl -sSL https://github.com/Daniel15/simple-nuget-server/archive/master.zip -o master.zip && \
+    curl -sSL https://github.com/agowa338/simple-nuget-server/archive/master.zip -o master.zip && \
     unzip master.zip -d /var/www && mv /var/www/simple-nuget-server-master $APP_BASE && \
     chown www-data:www-data $APP_BASE/db $APP_BASE/packagefiles && \
     chmod 0770 $APP_BASE/db $APP_BASE/packagefiles && \
