@@ -6,17 +6,17 @@ ENV DEFAULT_SIZE 20M
 ENV DEFAULT_WORKER_PROCESSES 1
 ENV DEFAULT_WORKER_CONNECTIONS 65535
 
+# Copy simple-nuget-server into the container
+COPY simple-nuget-server $APP_BASE
+
 # Install PHP7 && Download project
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
-    ca-certificates curl unzip php php-fpm \
-    php-sqlite3 php-zip php-xml && \
+    ca-certificates php php-fpm php-sqlite3 php-zip php-xml && \
     rm -rf /var/lib/apt/lists/* && \
-    curl -sSL https://github.com/agowa338/simple-nuget-server/archive/master.zip -o master.zip && \
-    unzip master.zip -d /var/www && mv /var/www/simple-nuget-server-master $APP_BASE && \
     chown www-data:www-data $APP_BASE/db $APP_BASE/packagefiles && \
     chmod 0770 $APP_BASE/db $APP_BASE/packagefiles && \
-    rm -rf master.zip && rm /etc/nginx/conf.d/*
+    rm /etc/nginx/conf.d/*
 
 # Activate the nginx configuration
 COPY nginx.conf.example /etc/nginx/conf.d/nuget.conf
@@ -32,8 +32,6 @@ RUN sed -i -e "s/post_max_size.*/post_max_size = $DEFAULT_SIZE/" /etc/php/7.0/fp
     sed -i -e "s/worker_connections.*$/    worker_connections  $DEFAULT_WORKER_CONNECTIONS ;/" /etc/nginx/nginx.conf && \
     sed -i -e "/worker_connections.*$/a\    use epoll;" /etc/nginx/nginx.conf && \
     sed -i -e "s/keepalive_timeout.*$/    keepalive_timeout  5;/" /etc/nginx/nginx.conf && \
-    cd /etc/ && tar -cf /tmp/nginx.tar nginx && \
-    usermod -G www-data nginx && \
     chmod +x /bin/docker-entrypoint
 
 VOLUME ["$APP_BASE/db", "$APP_BASE/packagefiles"]

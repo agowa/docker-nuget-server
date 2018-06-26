@@ -1,77 +1,66 @@
 #!/bin/bash
 set -e
-NGINX_FILES=`ls /etc/nginx/`
-if [ -z "${NGINX_FILES}" ];then
-  chown nginx -R /etc/nginx
-  cd /etc && tar -xf /tmp/nginx.tar
-fi
 
-if [ "${1:0:1}" == "-" ];then
-  echo "Usage: docker run -d -p 80:80 --name nuget-server agowa338/simple-nuget-server"
-elif [ "$#" == "0" ];then
+# Usage: docker run -d -p 80:80 -e NUGET_API_KEY=<YOUR_API_KEY_HERE> --name nuget-server agowa338/simple-nuget-server
 
-  # Set API key.
-  DEFAULT_API_KEY="112233"
-  if [ -z ${NUGET_API_KEY} ];then
-    echo "Using default Nuget push API key: ${DEFAULT_API_KEY}"
-    NUGET_API_KEY=${DEFAULT_API_KEY}
-  else
-    echo "Using specified API key: ${NUGET_API_KEY}"
-  fi
-  sed -i -e "s/apiKey =.*/apiKey = '${NUGET_API_KEY}';/" $APP_BASE/inc/config.php
-
-  # Set Upload max file size.
-  if [ -z ${UPLOAD_MAX_FILESIZE} ];then
-    echo "Using default  max upload file size is ${DEFAULT_SIZE}."
-  else
-    echo "Using specified max upload file size is ${UPLOAD_MAX_FILESIZE}."
-    sed -i -e "s/post_max_size.*$/post_max_size = ${UPLOAD_MAX_FILESIZE}/" /etc/php/7.0/fpm/php.ini
-    sed -i -e "s/upload_max_filesize.*$/upload_max_filesize = ${UPLOAD_MAX_FILESIZE}/" /etc/php/7.0/fpm/php.ini
-    sed -i -e "s/client_max_body_size.*$/client_max_body_size ${UPLOAD_MAX_FILESIZE};/g" /etc/nginx/conf.d/nuget.conf
-  fi
-
-  # Set server name.
-  if [ -z ${SERVER_NAME} ];then
-    echo "Using default server name: localhost"
-  else
-    echo "Using specified server name: ${SERVER_NAME}"
-    sed -i -e "s/server_name.*/server_name ${SERVER_NAME};/" /etc/nginx/conf.d/nuget.conf
-  fi
-
-  # Set server port.
-  if [ -z ${SERVER_PORT} ];then
-    echo "Using default port: 80"
-  else
-    echo "Using specified port: ${SERVER_PORT}"
-    sed -i -e "s/listen 80/listen ${SERVER_PORT}/" /etc/nginx/conf.d/nuget.conf
-  fi
-  
-  # Set Worker_Processes
-  if [ -z ${WORKER_PROCESSES} ];then
-    echo "Using default nginx worker_processes: ${DEFAULT_WORKER_PROCESSES}"
-  else
-    echo "Using specified nginx worker_processes ${WORKER_PROCESSES}"
-    sed -i -e "s/worker_processes.*$/worker_processes  ${WORKER_PROCESSES};/" /etc/nginx/nginx.conf
-  fi
-  
-  # Set Worker_Connections
-  if [ -z ${WORKER_CONNECTIONS} ];then
-    echo "Using default worker_connections: ${DEFAULT_WORKER_CONNECTIONS}"
-  else
-    echo "Using specified worker_connections: ${WORKER_CONNECTIONS}"
-    sed -i -e "s/worker_connections.*$/    worker_connections  ${WORKER_CONNECTIONS};/" /etc/nginx/nginx.conf
-  fi
-  
-  # Set folder property.
-  #chown www-data $APP_BASE/db $APP_BASE/packagefiles
-
-  # Start
-  echo 'Starting Services.'
-  /etc/init.d/php7.0-fpm start
-  /etc/init.d/nginx start
-
-  tail -f /dev/null
-
+# Set API key.
+DEFAULT_API_KEY="112233"
+if [ -z ${NUGET_API_KEY} ];then
+  echo "Using default Nuget push API key: ${DEFAULT_API_KEY}"
+  NUGET_API_KEY=${DEFAULT_API_KEY}
 else
-  exec "$@"
+  echo "Using specified API key: ${NUGET_API_KEY}"
 fi
+sed -i -e "s/apiKey =.*/apiKey = '${NUGET_API_KEY}';/" $APP_BASE/inc/config.php
+
+# Set Upload max file size.
+if [ -z ${UPLOAD_MAX_FILESIZE} ];then
+  echo "Using default  max upload file size is ${DEFAULT_SIZE}."
+else
+  echo "Using specified max upload file size is ${UPLOAD_MAX_FILESIZE}."
+  sed -i -e "s/post_max_size.*$/post_max_size = ${UPLOAD_MAX_FILESIZE}/" /etc/php/7.0/fpm/php.ini
+  sed -i -e "s/upload_max_filesize.*$/upload_max_filesize = ${UPLOAD_MAX_FILESIZE}/" /etc/php/7.0/fpm/php.ini
+  sed -i -e "s/client_max_body_size.*$/client_max_body_size ${UPLOAD_MAX_FILESIZE};/g" /etc/nginx/conf.d/nuget.conf
+fi
+
+# Set server name.
+if [ -z ${SERVER_NAME} ];then
+  echo "Using default server name: localhost"
+else
+  echo "Using specified server name: ${SERVER_NAME}"
+  sed -i -e "s/server_name.*/server_name ${SERVER_NAME};/" /etc/nginx/conf.d/nuget.conf
+fi
+
+# Set server port.
+if [ -z ${SERVER_PORT} ];then
+  echo "Using default port: 80"
+else
+  echo "Using specified port: ${SERVER_PORT}"
+  sed -i -e "s/listen 80/listen ${SERVER_PORT}/" /etc/nginx/conf.d/nuget.conf
+fi
+
+# Set Worker_Processes
+if [ -z ${WORKER_PROCESSES} ];then
+  echo "Using default nginx worker_processes: ${DEFAULT_WORKER_PROCESSES}"
+else
+  echo "Using specified nginx worker_processes ${WORKER_PROCESSES}"
+  sed -i -e "s/worker_processes.*$/worker_processes  ${WORKER_PROCESSES};/" /etc/nginx/nginx.conf
+fi
+
+# Set Worker_Connections
+if [ -z ${WORKER_CONNECTIONS} ];then
+  echo "Using default worker_connections: ${DEFAULT_WORKER_CONNECTIONS}"
+else
+  echo "Using specified worker_connections: ${WORKER_CONNECTIONS}"
+  sed -i -e "s/worker_connections.*$/    worker_connections  ${WORKER_CONNECTIONS};/" /etc/nginx/nginx.conf
+fi
+
+# Set folder property.
+#chown www-data $APP_BASE/db $APP_BASE/packagefiles
+
+# Start
+echo 'Starting Services.'
+/etc/init.d/php7.0-fpm start
+/etc/init.d/nginx start
+
+tail -f /dev/null

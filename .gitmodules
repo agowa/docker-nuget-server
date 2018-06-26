@@ -1,0 +1,4 @@
+[submodule "simple-nuget-server"]
+	path = simple-nuget-server
+	url = ../simple-nuget-server.git
+	branch = master
