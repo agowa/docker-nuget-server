@@ -25,7 +25,8 @@ services:
   nuget-server:
     container_name: nuget-server
     image: agowa338/docker-nuget-server:latest
-    network_mode: "host"
+    ports:
+      - "80:80"
     restart: always
     environment:
       NUGET_API_KEY: "bF82eD5c1"
