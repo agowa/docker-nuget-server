@@ -16,7 +16,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     chown www-data:www-data $APP_BASE/db $APP_BASE/packagefiles && \
     chmod 0770 $APP_BASE/db $APP_BASE/packagefiles && \
-    rm /etc/nginx/conf.d/*
+    rm /etc/nginx/conf.d/* && \
+    usermod -aG www-data nginx
 
 # Activate the nginx configuration
 COPY nginx.conf.example /etc/nginx/conf.d/nuget.conf
