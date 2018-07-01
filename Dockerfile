@@ -21,6 +21,7 @@ RUN apt-get update && \
 
 # Activate the nginx configuration
 COPY nginx.conf.example /etc/nginx/conf.d/nuget.conf
+COPY nginx.conf.tlsexample /etc/nginx/conf.d/nugettls.conf
 
 COPY docker-entrypoint /bin/docker-entrypoint
 
@@ -35,8 +36,8 @@ RUN sed -i -e "s/post_max_size.*/post_max_size = $DEFAULT_SIZE/" /etc/php/7.0/fp
     sed -i -e "s/keepalive_timeout.*$/    keepalive_timeout  5;/" /etc/nginx/nginx.conf && \
     chmod +x /bin/docker-entrypoint
 
-VOLUME ["$APP_BASE/db", "$APP_BASE/packagefiles"]
+VOLUME ["$APP_BASE/db", "$APP_BASE/packagefiles", "/etc/nginx/tls"]
 
-EXPOSE 80
+EXPOSE 80 443
 
 ENTRYPOINT ["docker-entrypoint"]

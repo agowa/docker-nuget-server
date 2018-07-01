@@ -2,8 +2,26 @@
 
 server {
     server_name localhost;
-    listen [::]:80 default backlog=1024;
-    listen 80  default backlog=1024;
+    listen [::]:443 default_server backlog=1024 http2;
+    listen 443 ssl default_server backlog=1024 http2;
+
+    ssl_certificate /etc/nginx/tls/cert.pem;
+    ssl_certificate_key /etc/nginx/tls/key.pem;
+
+    # openssl dhparam 4096 -out /etc/nginx/tls/dhparam.pem
+    ssl_dhparam /etc/nginx/tls/dhparam.pem;
+
+    ssl_protocols TLSv1.3 TLSv1.2 TLSv1.1 TLSv1;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA512:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:ECDH+AESGCM:ECDH+AES256:DH+AESGCM:DH+AES256:RSA+AESGCM:!aNULL:!eNULL:!LOW:!RC4:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS;
+
+    ssl_session_cache shared:TLS:2m;
+
+    # OCSP stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 1.1.1.1; # 1dot1dot1dot1.cloudflare-dns.com
+
     root /var/www/simple-nuget-server/public/;
     client_max_body_size 20M;
     client_body_buffer_size 5M;
@@ -12,7 +30,7 @@ server {
     open_file_cache_valid 60s;
     open_file_cache_min_uses 1;
     open_file_cache_errors on;
-    
+
     rewrite ^/$ /index.php;
     rewrite ^/\$metadata$ /metadata.xml;
     rewrite ^/Search\(\)/\$count$ /count.php;
@@ -30,7 +48,6 @@ server {
     rewrite ^/api/v2/package/([^/]+)/([^/]+)$ /delete.php?id=$1&version=$2;
 
     location ~ \.php$ {
-
         try_files $uri =404;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
@@ -41,7 +58,6 @@ server {
         fastcgi_temp_file_write_size 5M;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
-
     }
 
     location = /index.php {
@@ -68,4 +84,12 @@ server {
         internal;
         root /var/www/simple-nuget-server/;
     }
+}
+
+server {
+  listen [::]:80;
+  listen      80;
+  server_name localhost;
+  # Redirect all non-https requests
+  rewrite ^ https://$host$request_uri? permanent;
 }
