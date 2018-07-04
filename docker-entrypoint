@@ -13,6 +13,15 @@ else
 fi
 sed -i -e "s/apiKey =.*/apiKey = '${NUGET_API_KEY}';/" $APP_BASE/inc/config.php
 
+# Set Enable HTTPS
+if [ -z ${ENABLE_HTTPS} ];then
+  rm -f /etc/nginx/conf.d/nuget.conf
+  ln -s /etc/nginx/conf.d/nuget.conf.example /etc/nginx/conf.d/nuget.conf
+else
+  rm -f /etc/nginx/conf.d/nuget.conf
+  ln -s /etc/nginx/conf.d/nugettls.conf.example /etc/nginx/conf.d/nuget.conf
+fi
+
 # Set Upload max file size.
 if [ -z ${UPLOAD_MAX_FILESIZE} ];then
   echo "Using default max upload file size: ${DEFAULT_SIZE}."
@@ -21,7 +30,6 @@ else
   sed -i -e "s/post_max_size.*$/post_max_size = ${UPLOAD_MAX_FILESIZE}/" /etc/php/7.0/fpm/php.ini
   sed -i -e "s/upload_max_filesize.*$/upload_max_filesize = ${UPLOAD_MAX_FILESIZE}/" /etc/php/7.0/fpm/php.ini
   sed -i -e "s/client_max_body_size.*$/client_max_body_size ${UPLOAD_MAX_FILESIZE};/g" /etc/nginx/conf.d/nuget.conf
-  sed -i -e "s/client_max_body_size.*$/client_max_body_size ${UPLOAD_MAX_FILESIZE};/g" /etc/nginx/conf.d/nugettls.conf
 fi
 
 # Set server name.
@@ -30,7 +38,6 @@ if [ -z ${SERVER_NAME} ];then
 else
   echo "Using specified server name: ${SERVER_NAME}"
   sed -i -e "s/server_name.*/server_name ${SERVER_NAME};/" /etc/nginx/conf.d/nuget.conf
-  sed -i -e "s/server_name.*/server_name ${SERVER_NAME};/" /etc/nginx/conf.d/nugettls.conf
 fi
 
 # Set Worker_Processes
@@ -47,13 +54,6 @@ if [ -z ${WORKER_CONNECTIONS} ];then
 else
   echo "Using specified worker_connections: ${WORKER_CONNECTIONS}"
   sed -i -e "s/worker_connections.*$/    worker_connections  ${WORKER_CONNECTIONS};/" /etc/nginx/nginx.conf
-fi
-
-# Set Enable HTTPS
-if [ -z ${ENABLE_HTTPS} ];then
-  rm -f /etc/nginx/conf.d/nugettls.conf
-else
-  rm -f /etc/nginx/conf.d/nuget.conf
 fi
 
 # Set folder property.

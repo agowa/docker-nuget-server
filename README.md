@@ -15,15 +15,14 @@ Auto build docker [image](https://hub.docker.com/r/agowa338/docker-nuget-server/
 ### https
 
 ``` shell
-api_key = `openssl rand -base64 32`
-
-docker run -d --name nuget-server -p 443:443 -e HTTPS_ENABLE=true -e NUGET_API_KEY=$api_key agowa338/docker-nuget-server
+api_key=`openssl rand -base64 32`
+docker run -d --name nuget-server -p 443:443 -v /srv/nuget/tls:/etc/nginx/tls:ro -e HTTPS_ENABLE=true -e NUGET_API_KEY=$api_key agowa338/docker-nuget-server
 ```
 
 ### http
 
 ``` shell
-api_key = `openssl rand -base64 32`
+api_key=`openssl rand -base64 32`
 docker run -d --name nuget-server -p 80:80 -e NUGET_API_KEY=$api_key agowa338/docker-nuget-server
 ```
 
@@ -60,9 +59,24 @@ services:
         soft: 20000
         hard: 40000
 volumes:
-  nuget-db:/srv/nuget/db
-  nuget-packagefiles:/srv/nuget/packagefiles
-  nuget-tls:/srv/nuget/tls
+  nuget-db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/srv/nuget/db'
+  nuget-packagefiles:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/srv/nuget/packagefiles'
+  nuget-tls:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/srv/nuget/tls'
 ```
 
 #### http
@@ -92,8 +106,18 @@ services:
         soft: 20000
         hard: 40000
 volumes:
-  nuget-db:/srv/nuget/db
-  nuget-packagefiles:/srv/nuget/packagefiles
+  nuget-db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/srv/nuget/db'
+  nuget-packagefiles:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/srv/nuget/packagefiles'
   nuget-tls:
 ```
 
