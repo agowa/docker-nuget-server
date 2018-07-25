@@ -11,7 +11,12 @@ if [ -z ${NUGET_API_KEY} ];then
 else
   echo "Using specified API key: ${NUGET_API_KEY}"
 fi
-sed -i -e "s/apiKey =.*/apiKey = '${NUGET_API_KEY}';/" $APP_BASE/inc/config.php
+if [[ ${NUGET_API_KEY} = *"~"* ]];then
+  echo "Invalid character in apiKey. The character '~’ is not allowed."
+  exit 1
+else
+  sed -i -e "s~apiKey =.*~apiKey = '${NUGET_API_KEY}';~" $APP_BASE/inc/config.php
+fi
 
 # Set Enable HTTPS
 if [ -z ${ENABLE_HTTPS} ];then
