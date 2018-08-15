@@ -18,8 +18,6 @@ before_script:
 
 build:
   stage: build
-  except:
-    - schedules
   tags:
     - dind
   script:
@@ -28,8 +26,6 @@ build:
 
 release:
   stage: release
-  except:
-    - schedules
   tags:
     - dind
   script:
