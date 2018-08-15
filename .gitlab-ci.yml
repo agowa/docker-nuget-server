@@ -1,9 +1,48 @@
-image: alpine:latest
+image: docker:latest
+
+variables:
+  DOCKER_DRIVER: overlay2
+  TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - release
+  - deploy
+
+before_script:
+  - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+
+build:
+  stage: build
+  except:
+    - schedules
+  tags:
+    - dind
+  script:
+    - docker build --pull -t "$TEST_IMAGE" .
+    - docker push "$TEST_IMAGE"
+
+release:
+  stage: release
+  except:
+    - schedules
+  tags:
+    - dind
+  script:
+    - docker pull "$TEST_IMAGE"
+    - docker tag "$TEST_IMAGE" "$RELEASE_IMAGE"
+    - docker push "$RELEASE_IMAGE"
+  only:
+    - master
 
 dockerhub:on-schedule:
+  stage: deploy
   only:
     - schedules
-  stage: deploy
   script:
     - apk add --update curl
     - curl --data build=true -X POST https://registry.hub.docker.com/u/agowa338/docker-nuget-server/trigger/$dockerhub_trigger_token/
