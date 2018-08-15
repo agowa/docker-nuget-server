@@ -1,0 +1,9 @@
+image: alpine:latest
+
+dockerhub:on-schedule:
+  only:
+    - schedules
+  stage: deploy
+  script:
+    - apk add --update curl
+    - curl --data build=true -X POST https://registry.hub.docker.com/u/agowa338/docker-nuget-server/trigger/$dockerhub_trigger_token/
