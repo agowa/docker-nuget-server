@@ -14,14 +14,12 @@ stages:
   - release
   - deploy
 
-before_script:
-  - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
-
 build:
   stage: build
   tags:
     - dind
   script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
     - docker build --pull -t "$TEST_IMAGE" .
     - docker push "$TEST_IMAGE"
 
@@ -30,6 +28,7 @@ release:
   tags:
     - dind
   script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
     - docker pull "$TEST_IMAGE"
     - docker tag "$TEST_IMAGE" "$RELEASE_IMAGE"
     - docker push "$RELEASE_IMAGE"
