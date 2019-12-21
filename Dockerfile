@@ -26,9 +26,9 @@ COPY nginx.conf.tlsexample /etc/nginx/conf.d/nugettls.conf.example
 COPY docker-entrypoint /bin/docker-entrypoint
 
 # Set default upload file sizes limit
-RUN sed -i -e "s/post_max_size.*/post_max_size = $DEFAULT_SIZE/" /etc/php/7.0/fpm/php.ini && \
-    sed -i -e "s/upload_max_filesize.*/upload_max_filesize = $DEFAULT_SIZE/" /etc/php/7.0/fpm/php.ini && \
-    sed -i -e "s/;pm.max_requests.*$/pm.max_requests = 10240/" /etc/php/7.0/fpm/pool.d/www.conf && \
+RUN sed -i -e "s/post_max_size.*/post_max_size = $DEFAULT_SIZE/" /etc/php/7.3/fpm/php.ini && \
+    sed -i -e "s/upload_max_filesize.*/upload_max_filesize = $DEFAULT_SIZE/" /etc/php/7.3/fpm/php.ini && \
+    sed -i -e "s/;pm.max_requests.*$/pm.max_requests = 10240/" /etc/php/7.3/fpm/pool.d/www.conf && \
     sed -i -e "s/client_max_body_size.*$/client_max_body_size $DEFAULT_SIZE;/g" /etc/nginx/conf.d/nuget.conf.example && \
     sed -i -e "s/client_max_body_size.*$/client_max_body_size $DEFAULT_SIZE;/g" /etc/nginx/conf.d/nugettls.conf.example && \
     sed -i -e "s/worker_processes.*$/worker_processes  $DEFAULT_WORKER_PROCESSES;/" /etc/nginx/nginx.conf && \
